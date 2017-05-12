@@ -1,0 +1,4 @@
+/tmp
+/manifests
+/salt/pillar
+/salt/config/minion.d/_schedule.conf
