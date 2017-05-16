@@ -1,7 +1,7 @@
-# CaaSP hacking
+# CaaSP development environment
 
-This document outlines what's required to set up a CaaSP hacking machine, and how to develop CaaSP
-in an efficient way.
+This document outlines what's required to set up a CaaSP development environment machine, and how to
+develop CaaSP in an efficient way.
 
 You will need to have a working `kubelet` on your machine.
 
@@ -137,6 +137,6 @@ $ ./cleanup
 
 ## Licensing
 
-CaaSP hacking is licensed under the Apache License, Version 2.0. See
+CaaSP development environment is licensed under the Apache License, Version 2.0. See
 [LICENSE](https://github.com/kubic-project/velum/blob/master/LICENSE) for the
 full license text.
