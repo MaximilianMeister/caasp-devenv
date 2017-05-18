@@ -107,4 +107,4 @@ else
 fi
 
 log "Launching kubelet"
-sudo kubelet --pod-manifest-path=$PWD/manifests --root-dir=$PWD/tmp --v=$KUBE_LOG_LEVEL --address=127.0.0.1 --hostname-override=127.0.0.1
+sudo kubelet --pod-manifest-path=$PWD/manifests --root-dir=$PWD/tmp --v=$KUBE_LOG_LEVEL --address=127.0.0.1 --hostname-override=127.0.0.1 --cgroups-per-qos=false --enforce-node-allocatable=""
