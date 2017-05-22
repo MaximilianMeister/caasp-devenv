@@ -50,6 +50,7 @@ def patch_container_envvars(container)
 end
 
 def patch_container_volumes(container)
+  container["volumeMounts"] ||= Array.new
   container["volumeMounts"].reject! do |volume_mount|
     ["salt", "salt-master-config"].include? volume_mount["name"]
   end

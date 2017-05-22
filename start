@@ -61,9 +61,9 @@ done
 default_interface=$(awk '$2 == 00000000 { print $1 }' /proc/net/route)
 ip_address=$(ip addr show $default_interface | awk '$1 == "inet" {print $2}' | cut -f1 -d/)
 
-for template in $(ls manifest-templates)
+for template in $(ls manifest-templates/*.yaml)
 do
-    sed -e "s#\${ip_address}#$ip_address#" manifest-templates/$template > manifests/$template
+    cat $template | ruby process_manifest.rb $CONTAINER_MANIFESTS_DIR $VELUM_DIR $SALT_DIR | sed -e "s#\${ip_address}#$ip_address#" > manifests/$(basename $template)
 done
 
 if ! $(which kubelet >&/dev/null); then
@@ -76,16 +76,18 @@ fi
 sudo mkdir -p $PWD/tmp/mariadb-socket
 sudo chmod 777 $PWD/tmp/mariadb-socket
 
-set +e
-docker pull docker-testing-registry.suse.de/sles12/velum:development | grep "up to date" &> /dev/null
-image_up_to_date=$?
-set -e
+if [ -z "$SKIP_IMAGE_UPDATE" ]; then
+  set +e
+  docker pull docker-testing-registry.suse.de/sles12/velum:development | grep "up to date" &> /dev/null
+  image_up_to_date=$?
+  set -e
+fi
 
 if [[ $image_up_to_date -ne 0 ]] ; then
   log "New Velum image found on the registry"
 fi
 
-if [[ $image_up_to_date -eq 0 ]] && ( docker images | grep "^sles12/velum" &> /dev/null ) ; then
+if [[ $image_up_to_date -eq 0 ]] && ( docker images | grep "^sles12/velum" | grep development &> /dev/null ) ; then
   log "Velum development image is present and up to date"
 else
   log "Building Velum development image..."
