@@ -1,0 +1,18 @@
+# CaaSP Development Environment Helper Functions
+
+set -euo pipefail
+
+find_container() {
+  local name=$1
+
+  docker ps | grep "${name}" | awk '{print $1}'
+}
+
+exec_in_container() {
+  local name=$1
+  local cmd="${@:2}"
+
+  local container_id=$(find_container $name)
+
+  docker exec -t $container_id $cmd
+}
