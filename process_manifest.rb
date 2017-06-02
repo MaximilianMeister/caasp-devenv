@@ -23,6 +23,10 @@ def container_volume(name:, path:)
   }
 end
 
+def patch_spec(yaml)
+  yaml["spec"]["imagePullPolicy"] = "Always"
+end
+
 def patch_container_image(container)
   if container["image"] =~ /^sles12\/velum/
     container["image"] = "sles12/velum:development"
@@ -141,6 +145,7 @@ end
 
 yaml = YAML.safe_load STDIN
 
+patch_spec yaml
 patch_containers yaml
 patch_host_volumes yaml
 
