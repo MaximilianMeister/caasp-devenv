@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dev-env
+  labels:
+    name: dev-env
+  annotations:
+    pod.beta.kubernetes.io/init-containers: '[
+      {
+        "name": "mariadb-dev-user-secrets",
+        "image": "sles12/mariadb:10.0",
+        "command": ["/setup-mysql.sh"],
+        "env": [
+          {
+            "name": "ENV",
+            "value": "development"
+          }
+        ],
+        "volumeMounts": [
+          {
+            "mountPath": "/infra-secrets",
+            "name": "infra-secrets",
+            "readOnly": true
+          },
+          {
+            "mountPath": "/var/run/mysql",
+            "name": "mariadb-unix-socket"
+          },
+          {
+            "mountPath": "/setup-mysql.sh",
+            "name": "setup-mysql",
+            "readOnly": true
+          }
+        ]
+      },
+      {
+        "name": "mariadb-test-user-secrets",
+        "image": "sles12/mariadb:10.0",
+        "command": ["/setup-mysql.sh"],
+        "env": [
+          {
+            "name": "ENV",
+            "value": "test"
+          }
+        ],
+        "volumeMounts": [
+          {
+            "mountPath": "/infra-secrets",
+            "name": "infra-secrets",
+            "readOnly": true
+          },
+          {
+            "mountPath": "/var/run/mysql",
+            "name": "mariadb-unix-socket"
+          },
+          {
+            "mountPath": "/setup-mysql.sh",
+            "name": "setup-mysql",
+            "readOnly": true
+          }
+        ]
+      }
+    ]'
+spec:
+  containers:
+    - name: dummy-dev-env-container
+      image: sles12/velum:0.0
+      command: ["ls"]
+  volumes:
+    - name: mariadb-unix-socket
+      hostPath:
+        path: /var/run/mysql
+    - name: infra-secrets
+      hostPath:
+        path: /var/lib/misc/infra-secrets
+    - name: setup-mysql
+      hostPath:
+        path: /usr/share/caasp-container-manifests/setup/mysql/setup-mysql.sh

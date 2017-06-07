@@ -49,4 +49,5 @@
 CONTAINER_BUILD=`docker run -d sles12/velum:development cp /srv/velum/db/schema.rb /var/lib/velum`
 docker logs -f $CONTAINER_BUILD
 docker commit $CONTAINER_BUILD sles12/velum:development
+docker tag sles12/velum:development sles12/velum:0.0
 docker rm $CONTAINER_BUILD
