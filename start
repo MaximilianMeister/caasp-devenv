@@ -34,7 +34,7 @@ done
 
 if [ -z ${VELUM_DIR+x} ]
 then
-    log "You must provide a SALT_DIR, aborting"
+    log "You must provide a VELUM_DIR, aborting"
     exit 1
 fi
 
