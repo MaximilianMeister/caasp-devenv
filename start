@@ -78,7 +78,7 @@ sudo chmod 777 $PWD/tmp/mariadb-socket
 
 if [ -z "$SKIP_IMAGE_UPDATE" ]; then
   set +e
-  docker pull docker-testing-registry.suse.de/sles12/velum:development | grep "up to date" &> /dev/null
+  docker pull docker-testing-registry.suse.de/devel/sles12/velum-development | grep "up to date" &> /dev/null
   image_up_to_date=$?
   set -e
 fi
@@ -91,7 +91,7 @@ if [[ $image_up_to_date -eq 0 ]] && ( docker images | grep "^sles12/velum" | gre
   log "Velum development image is present and up to date"
 else
   log "Building Velum development image..."
-  CONTAINER_BUILD=`docker run -v $VELUM_DIR:/srv/velum -d docker-testing-registry.suse.de/sles12/velum:development \
+  CONTAINER_BUILD=`docker run -v $VELUM_DIR:/srv/velum -d docker-testing-registry.suse.de/devel/sles12/velum-development \
                     bash -c "gem install --no-ri --no-rdoc --install-dir /var/lib/velum/ruby/2.1.0 bundler && \
                     bundle config --local frozen 0 && \
                     bundle config --local build.nokogiri --use-system-libraries && \

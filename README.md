@@ -47,6 +47,35 @@ interaction will be omitted. This plays nice with CI jobs, for example:
 $ VELUM_DIR=~/projects/kubic-project/velum SALT_DIR=~/projects/kubic-project/salt CONTAINER_MANIFESTS_DIR=~/projects/kubic-project/caasp-container-manifests ./start --non-interactive
 ```
 
+### Staging based development environment
+
+You can provide the `STAGING` environment variable to the start script, so containers will be pulled
+with the `STAGING` image version that you provide. For example, you could execute:
+
+```sh
+$ STAGING=staging_a VELUM_DIR=~/projects/kubic-project/velum SALT_DIR=~/projects/kubic-project/salt CONTAINER_MANIFESTS_DIR=~/projects/kubic-project/caasp-container-manifests ./start --non-interactive
+```
+
+In this case, for example, MariaDB container would be pulled as: `docker-testing-registry.suse.de/staging_a/sles12/mariadb:10.0`
+if the manifest contained `sles12/mariadb:10`.
+
+This allows you to change consistently between development environments based on the current
+development repositories, or others based on staging.
+
+If this environment variable is not provided, the pulled images will be the ones referenced in the
+`caasp-container-manifests` project (production images).
+
+The supported `STAGING` values can change over time, so that depends on how our build system is
+organized on that specific point in time. However, two cases will always apply: leaving it unset
+(which means using production images from product), and using `devel`, that will use the current
+development branch versions.
+
+```sh
+$ STAGING=devel VELUM_DIR=~/projects/kubic-project/velum SALT_DIR=~/projects/kubic-project/salt CONTAINER_MANIFESTS_DIR=~/projects/kubic-project/caasp-container-manifests ./start --non-interactive
+```
+
+This will effectively use the `devel` version of the containers.
+
 ## Accessing your shiny development environment
 
 Once that you have started the development environment, you will be able to point your preferred

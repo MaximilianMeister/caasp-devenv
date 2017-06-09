@@ -45,12 +45,15 @@ def patch_annotation_image(annotation)
   end
 end
 
+def registry_container_image(container)
+  ENV["STAGING"] ? "#{ENV["STAGING"]}/#{container["image"]}" : container["image"]
+end
+
 def patch_container_image(container)
   if container["image"] =~ /^sles12\/velum/
     container["image"] = "sles12/velum:development"
   elsif container["image"] =~ /^sles12/
-    # FIXME: this is a temporary solution until an official registry is available
-    container["image"] = "docker-testing-registry.suse.de/#{container["image"]}"
+    container["image"] = "docker-testing-registry.suse.de/#{registry_container_image container}"
   else
     warn "unknown image #{container["image"]}; won't replace it"
   end
@@ -70,7 +73,9 @@ end
 def patch_container_volumes(container)
   container["volumeMounts"] ||= Array.new
   container["volumeMounts"].reject! do |volume_mount|
-    ["salt", "salt-master-config"].include? volume_mount["name"]
+    volume_mount["name"] == "salt" ||
+      (volume_mount["name"] != "salt-master-config-returner-credentials-conf" &&
+       volume_mount["name"] =~ /^salt-master-config-/)
   end
   container["volumeMounts"] +=
     case container["name"]
@@ -159,6 +164,10 @@ def patch_host_volumes(yaml)
   yaml["spec"]["volumes"] ||= []
   yaml["spec"]["volumes"].each do |volume|
     patch_host_container_manifests(volume) || patch_host_salt(volume) || patch_root_dir(volume)
+  end
+  yaml["spec"]["volumes"].reject! do |volume|
+    volume["name"] != "salt-master-config-returner-credentials-conf" &&
+      volume["name"] =~ /^salt-master-config-/
   end
   yaml["spec"]["volumes"] += [
     host_volume(name: "velum-source-code", path: VELUM_SOURCE_CODE_DIR),

@@ -19,8 +19,7 @@ metadata:
         "volumeMounts": [
           {
             "mountPath": "/infra-secrets",
-            "name": "infra-secrets",
-            "readOnly": true
+            "name": "infra-secrets"
           },
           {
             "mountPath": "/var/run/mysql",
@@ -46,8 +45,7 @@ metadata:
         "volumeMounts": [
           {
             "mountPath": "/infra-secrets",
-            "name": "infra-secrets",
-            "readOnly": true
+            "name": "infra-secrets"
           },
           {
             "mountPath": "/var/run/mysql",
@@ -65,7 +63,7 @@ spec:
   containers:
     - name: dummy-dev-env-container
       image: sles12/velum:0.0
-      command: ["ls"]
+      command: ["bash", "-c", "exit 0"]
   volumes:
     - name: mariadb-unix-socket
       hostPath:
