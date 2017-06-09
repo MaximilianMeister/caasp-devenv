@@ -24,10 +24,6 @@ def container_volume(name:, path:)
   }
 end
 
-def patch_spec(yaml)
-  yaml["spec"]["imagePullPolicy"] = "Always"
-end
-
 def patch_annotation_image(annotation)
   # array of keys to process - makes it easy to add more later
   keys = ["pod.beta.kubernetes.io/init-containers"]
@@ -46,6 +42,8 @@ def patch_annotation_image(annotation)
 end
 
 def patch_container_image(container)
+  container["imagePullPolicy"] = "Always"
+
   if container["image"] =~ /^sles12\/velum/
     container["image"] = "sles12/velum:development"
   elsif container["image"] =~ /^sles12/
@@ -172,7 +170,6 @@ end
 
 yaml = YAML.safe_load STDIN
 
-patch_spec yaml
 patch_containers yaml
 patch_host_volumes yaml
 patch_annotations yaml
